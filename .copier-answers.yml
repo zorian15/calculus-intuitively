@@ -1,7 +1,7 @@
 # This file records the copier template and the answers used to generate this
 # book. It lets `copier update` pull later engine fixes as a three-way merge.
 # Changes here are overwritten by Copier; edit your answers via `copier update`.
-_commit: v1.0.0
+_commit: v1.1.0
 _src_path: gh:zorian15/textbook-template
 apple_web_app_title: Calculus
 audience: 'Someone taking Calculus 1–3 who does not think of themselves as a math
