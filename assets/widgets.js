@@ -277,6 +277,88 @@
     draw();
   };
 
+  // Approaching a limit from both sides. g(x) = (x^2 - 1)/(x - 1) = x + 1 for
+  // x != 1, with a hole at x = 1 where the limit is nonetheless 2.
+  WIDGETS["limit-explorer"] = function (figure, cap) {
+    var f = function (x) {
+      return x + 1;
+    };
+    var target = 1;
+    var limitValue = 2;
+    var xr = [-0.5, 2.5];
+    var yr = [-0.6, 4];
+    var cv = makeCanvas(figure, cap, 0.62);
+    var controls = controlsBox(figure, cap);
+    var readout = readoutBox(figure, cap);
+    var xInput = addSlider(
+      controls,
+      null,
+      "input&nbsp;<em>x</em>",
+      -0.4,
+      2.4,
+      0.01,
+      0.4
+    );
+
+    function draw() {
+      var dim = cv.size();
+      var pad = 8;
+      var mx = function (x) {
+        return pad + ((x - xr[0]) * (dim.w - 2 * pad)) / (xr[1] - xr[0]);
+      };
+      var my = function (y) {
+        return dim.h - pad - ((y - yr[0]) * (dim.h - 2 * pad)) / (yr[1] - yr[0]);
+      };
+      var ctx = cv.ctx;
+      var x = parseFloat(xInput.value);
+      var atHole = Math.abs(x - target) < 0.02;
+      var y = f(x);
+
+      drawAxes(ctx, dim, mx, my, xr, yr);
+      plotCurve(ctx, mx, my, xr, f, C.ink, 2.5);
+
+      // The open hole at x = 1 (function undefined there, limit still 2).
+      ctx.fillStyle = "#ffffff";
+      ctx.strokeStyle = C.ink;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(mx(target), my(limitValue), 5.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Dashed guides from the moving input up to the curve and across to y.
+      var side = x < target ? C.accent : C.amber;
+      ctx.save();
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = side;
+      ctx.lineWidth = 1.25;
+      ctx.beginPath();
+      ctx.moveTo(mx(x), my(0));
+      ctx.lineTo(mx(x), my(y));
+      ctx.lineTo(mx(0), my(y));
+      ctx.stroke();
+      ctx.restore();
+
+      if (!atHole) dot(ctx, mx(x), my(y), 5, side);
+
+      var gap = Math.abs(y - limitValue);
+      readout.innerHTML =
+        '<span class="widget-num secant">x = ' +
+        fmt(x) +
+        (x < target ? " (from the left)" : " (from the right)") +
+        "</span>" +
+        '<span class="widget-num tangent">output ' +
+        (atHole ? "= undefined at the hole" : "= " + fmt(y)) +
+        " · gap to 2 = " +
+        gap.toFixed(2) +
+        "</span>";
+    }
+
+    xInput.addEventListener("input", draw);
+    window.addEventListener("resize", draw);
+    draw();
+  };
+
   function boot() {
     var figures = document.querySelectorAll("figure.widget[data-widget]");
     Array.prototype.forEach.call(figures, function (figure) {

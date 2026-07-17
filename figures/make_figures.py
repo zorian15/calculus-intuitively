@@ -190,6 +190,728 @@ def fig_derivative_pair() -> Path:
     return save_plot(fig, "derivative-pair.svg")
 
 
+def fig_function_machine() -> Path:
+    """A function drawn as a machine: input in, fixed rule, one output out."""
+    w, h = 560, 340
+    body = [
+        arrow_marker(INK_SOFT, "fm-arrow"),
+        f'<rect x="0" y="0" width="{w}" height="{h}" fill="none"/>',
+        eyebrow(30, 40, "A FUNCTION IS A MACHINE"),
+    ]
+
+    cy = 130  # Center height of the main flow.
+
+    # Input chip.
+    body += node_box(
+        30,
+        cy - 26,
+        92,
+        52,
+        "input 3",
+        fill="#ffffff",
+        stroke=RULE_STRONG,
+        text_fill=INK,
+        font_size=15,
+        weight=600,
+    )
+    # Arrow into the machine.
+    body.append(
+        f'<line x1="126" y1="{cy}" x2="196" y2="{cy}" stroke="{INK_SOFT}" '
+        f'stroke-width="2" marker-end="url(#fm-arrow)"/>'
+    )
+    # The machine box.
+    body.append(
+        f'<rect x="200" y="{cy - 58}" width="160" height="116" rx="10" '
+        f'fill="{ACCENT_SOFT}" stroke="{ACCENT}" stroke-width="2"/>'
+    )
+    body.append(
+        f'<text x="280" y="{cy - 22}" font-size="13" font-weight="700" '
+        f'fill="{ACCENT}" text-anchor="middle" letter-spacing="1">MACHINE f</text>'
+    )
+    body.append(
+        f'<text x="280" y="{cy + 12}" font-size="20" font-weight="700" '
+        f'fill="{INK}" text-anchor="middle">f(x) = 2x + 1</text>'
+    )
+    body.append(
+        f'<text x="280" y="{cy + 40}" font-size="12.5" '
+        f'fill="{MUTED}" text-anchor="middle">double it, then add one</text>'
+    )
+    # Arrow out of the machine.
+    body.append(
+        f'<line x1="364" y1="{cy}" x2="434" y2="{cy}" stroke="{INK_SOFT}" '
+        f'stroke-width="2" marker-end="url(#fm-arrow)"/>'
+    )
+    # Output chip.
+    body += node_box(
+        438,
+        cy - 26,
+        92,
+        52,
+        "output 7",
+        fill=AMBER,
+        stroke="none",
+        text_fill="#ffffff",
+        font_size=15,
+        weight=600,
+    )
+
+    # A little table of more pairs beneath the flow.
+    ty = 250
+    body.append(
+        f'<text x="30" y="{ty}" font-size="12.5" font-weight="700" '
+        f'fill="{INK_SOFT}">More of the same rule:</text>'
+    )
+    pairs = [("0", "1"), ("1", "3"), ("3", "7"), ("5", "11")]
+    x0 = 30
+    for i, (a, b) in enumerate(pairs):
+        px = x0 + i * 132
+        py = ty + 30
+        body.append(
+            f'<text x="{px}" y="{py}" font-size="15" fill="{INK}">'
+            f"f({a}) = {b}</text>"
+        )
+    svg = svg_doc(
+        w,
+        h,
+        "Function machine: input 3 enters the rule f of x equals 2x plus 1 and output 7 leaves.",
+        body,
+    )
+    return write_svg("function-machine.svg", svg)
+
+
+def fig_graph_pairs() -> Path:
+    """Read a graph: up from an input to the curve, across to the height."""
+    import numpy as np
+
+    style_plot()
+    fig, ax = plt.subplots(figsize=(5.6, 4.0))
+    xs = np.linspace(-3.4, 3.4, 400)
+    ax.plot(xs, xs**2, color=INK, linewidth=2.4, zorder=3)
+
+    ax.axhline(0, color=RULE_STRONG, linewidth=1.0)
+    ax.axvline(0, color=RULE_STRONG, linewidth=1.0)
+
+    pairs = [(-1, 1), (2, 4), (3, 9)]
+    for a, b in pairs:
+        # Dashed guide: up from the input, then across to the height.
+        ax.plot(
+            [a, a], [0, b], color=ACCENT, linewidth=1.2, linestyle=(0, (4, 3)), zorder=2
+        )
+        ax.plot(
+            [a, 0], [b, b], color=ACCENT, linewidth=1.2, linestyle=(0, (4, 3)), zorder=2
+        )
+        ax.plot([a], [b], marker="o", color=AMBER, markersize=7, zorder=5)
+
+    # Label the worked pair (2, 4) without crowding the curve.
+    ax.annotate(
+        "f(2) = 4",
+        xy=(2, 4),
+        xytext=(2.35, 2.1),
+        color=AMBER,
+        fontsize=9.5,
+        fontweight="bold",
+    )
+    ax.annotate("input 2", xy=(2, 0), xytext=(2.05, -1.15), color=MUTED, fontsize=8.5)
+    ax.annotate("height 4", xy=(0, 4), xytext=(-3.25, 4.35), color=MUTED, fontsize=8.5)
+
+    ax.set_xlim(-3.6, 3.8)
+    ax.set_ylim(-1.8, 10.2)
+    ax.set_xlabel("input (x)")
+    ax.set_ylabel("output (y)")
+    ax.set_xticks([-3, -2, -1, 1, 2, 3])
+    ax.set_yticks([2, 4, 6, 8, 10])
+    return save_plot(fig, "graph-pairs.svg")
+
+
+def fig_rise_over_run() -> Path:
+    """Rise over run: a right triangle under a straight line gives its slope."""
+    import numpy as np
+
+    style_plot()
+    fig, ax = plt.subplots(figsize=(5.6, 3.8))
+
+    # Line f(x) = 0.5 x + 1.
+    m, b = 0.5, 1.0
+    xs = np.linspace(-0.6, 6.4, 200)
+    ax.plot(xs, m * xs + b, color=INK, linewidth=2.4, zorder=3)
+
+    ax.axhline(0, color=RULE_STRONG, linewidth=1.0)
+    ax.axvline(0, color=RULE_STRONG, linewidth=1.0)
+
+    # Two points on the line.
+    x1, x2 = 1.0, 5.0
+    y1, y2 = m * x1 + b, m * x2 + b
+    for xx, yy in [(x1, y1), (x2, y2)]:
+        ax.plot([xx], [yy], marker="o", color=ACCENT, markersize=7, zorder=5)
+
+    # Run leg (horizontal) and rise leg (vertical) forming the triangle.
+    ax.plot([x1, x2], [y1, y1], color=AMBER, linewidth=2.2, zorder=4)
+    ax.plot([x2, x2], [y1, y2], color=AMBER, linewidth=2.2, zorder=4)
+
+    ax.annotate(
+        "run = 4",
+        xy=((x1 + x2) / 2, y1),
+        xytext=((x1 + x2) / 2 - 0.5, y1 - 0.55),
+        color=AMBER,
+        fontsize=10,
+        fontweight="bold",
+    )
+    ax.annotate(
+        "rise = 2",
+        xy=(x2, (y1 + y2) / 2),
+        xytext=(x2 + 0.15, (y1 + y2) / 2 - 0.15),
+        color=AMBER,
+        fontsize=10,
+        fontweight="bold",
+    )
+    ax.annotate(
+        "slope = rise / run = 2/4 = 1/2",
+        xy=(0.9, 3.9),
+        xytext=(0.2, 4.15),
+        color=INK_SOFT,
+        fontsize=10,
+        fontweight="bold",
+    )
+
+    ax.set_xlim(-0.8, 7.0)
+    ax.set_ylim(-0.9, 5.0)
+    ax.set_xlabel("across")
+    ax.set_ylabel("up")
+    ax.set_xticks([1, 2, 3, 4, 5, 6])
+    ax.set_yticks([1, 2, 3, 4])
+    return save_plot(fig, "rise-over-run.svg")
+
+
+def fig_limit_hole() -> Path:
+    """Plot y = x + 1 with a removable hole at (1, 2) and inward approach arrows."""
+    import numpy as np
+
+    style_plot()
+    fig, ax = plt.subplots(figsize=(6.0, 3.6))
+    xs = np.linspace(-0.4, 2.4, 400)
+    ax.plot(xs, xs + 1, color=INK, linewidth=2.2)
+
+    # The forbidden input: the function is absent here, drawn as an open circle.
+    ax.plot(
+        [1],
+        [2],
+        marker="o",
+        markersize=9,
+        markerfacecolor="white",
+        markeredgecolor=ACCENT,
+        markeredgewidth=2.0,
+        zorder=6,
+    )
+
+    # Arrows running along the line, closing in on the hole from both sides.
+    ax.annotate(
+        "",
+        xy=(0.86, 1.86),
+        xytext=(0.3, 1.3),
+        arrowprops=dict(arrowstyle="-|>", color=ACCENT, lw=2.0),
+    )
+    ax.annotate(
+        "",
+        xy=(1.14, 2.14),
+        xytext=(1.7, 2.7),
+        arrowprops=dict(arrowstyle="-|>", color=ACCENT, lw=2.0),
+    )
+    ax.text(0.28, 1.10, "from the left", color=ACCENT, fontsize=8, ha="left")
+    ax.text(1.72, 2.64, "from the right", color=ACCENT, fontsize=8, ha="left")
+
+    # Dashed guides from the hole to the axes.
+    ax.plot(
+        [1, 1],
+        [0, 2],
+        color=RULE_STRONG,
+        linewidth=1.0,
+        linestyle=(0, (4, 3)),
+        zorder=1,
+    )
+    ax.plot(
+        [-0.4, 1],
+        [2, 2],
+        color=RULE_STRONG,
+        linewidth=1.0,
+        linestyle=(0, (4, 3)),
+        zorder=1,
+    )
+    ax.text(1.06, 2.30, "limit = 2", color=AMBER, fontsize=9, fontweight="bold")
+
+    ax.set_xlim(-0.4, 2.4)
+    ax.set_ylim(0, 3.4)
+    ax.set_xlabel("x")
+    ax.set_xticks([1])
+    ax.set_xticklabels(["1"])
+    ax.set_yticks([2])
+    ax.set_yticklabels(["2"])
+    return save_plot(fig, "limit-hole.svg")
+
+
+def fig_limit_failures() -> Path:
+    """Contrast a clean limit, a jump, and a blow-up in three small panels."""
+    import numpy as np
+
+    style_plot()
+    fig, axes = plt.subplots(1, 3, figsize=(7.2, 2.7))
+
+    # Panel 1: a clean two-sided approach — the limit exists.
+    ax = axes[0]
+    xs = np.linspace(-1.0, 1.0, 200)
+    ax.plot(xs, 1.4 - 0.6 * xs**2, color=INK, linewidth=2.0)
+    ax.plot([0], [1.4], marker="o", markersize=7, color=ACCENT, zorder=5)
+    ax.annotate(
+        "",
+        xy=(-0.12, 1.39),
+        xytext=(-0.55, 1.22),
+        arrowprops=dict(arrowstyle="-|>", color=ACCENT, lw=1.6),
+    )
+    ax.annotate(
+        "",
+        xy=(0.12, 1.39),
+        xytext=(0.55, 1.22),
+        arrowprops=dict(arrowstyle="-|>", color=ACCENT, lw=1.6),
+    )
+    ax.set_title("limit exists", color=INK)
+    ax.set_ylim(0, 2)
+
+    # Panel 2: a jump — the two sides head for different heights.
+    ax = axes[1]
+    xl = np.linspace(-1.0, -0.02, 100)
+    xr = np.linspace(0.02, 1.0, 100)
+    ax.plot(xl, 0.7 + 0.2 * xl, color=INK, linewidth=2.0)
+    ax.plot(xr, 1.4 + 0.2 * xr, color=INK, linewidth=2.0)
+    ax.plot(
+        [0],
+        [0.7],
+        marker="o",
+        markersize=7,
+        markerfacecolor="white",
+        markeredgecolor=BRICK,
+        markeredgewidth=1.8,
+        zorder=5,
+    )
+    ax.plot(
+        [0],
+        [1.4],
+        marker="o",
+        markersize=7,
+        markerfacecolor="white",
+        markeredgecolor=BRICK,
+        markeredgewidth=1.8,
+        zorder=5,
+    )
+    ax.set_title("a jump", color=INK)
+    ax.set_ylim(0, 2)
+
+    # Panel 3: a blow-up — the output escapes upward without bound.
+    ax = axes[2]
+    xl = np.linspace(-1.0, -0.12, 100)
+    xr = np.linspace(0.12, 1.0, 100)
+    ax.plot(xl, 0.02 / xl**2, color=INK, linewidth=2.0)
+    ax.plot(xr, 0.02 / xr**2, color=INK, linewidth=2.0)
+    ax.axvline(0, color=RULE_STRONG, linewidth=1.0, linestyle=(0, (4, 3)))
+    ax.set_title("a blow-up", color=INK)
+    ax.set_ylim(0, 2)
+
+    for ax in axes:
+        ax.set_xticks([0])
+        ax.set_xticklabels(["a"])
+        ax.set_yticks([])
+        ax.set_xlim(-1.0, 1.0)
+        ax.axhline(0, color=RULE_STRONG, linewidth=0.8)
+
+    fig.tight_layout()
+    return save_plot(fig, "limit-failures.svg")
+
+
+def fig_continuity_condition() -> Path:
+    """A continuous curve approaching and landing on the very point it aims at."""
+    import numpy as np
+
+    def curve(x):
+        return 0.35 * (x - 1.4) ** 3 - 0.6 * (x - 1.4) + 2.4
+
+    style_plot()
+    fig, ax = plt.subplots(figsize=(6.0, 3.6))
+    xs = np.linspace(-0.3, 3.3, 400)
+    ax.plot(xs, curve(xs), color=INK, linewidth=2.2)
+
+    a = 2.1
+    fa = curve(a)
+
+    # Dashed guides from the point to each axis.
+    ax.plot([a, a], [0, fa], color=RULE_STRONG, linewidth=1.0, linestyle=(0, (4, 3)))
+    ax.plot(
+        [-0.3, a], [fa, fa], color=RULE_STRONG, linewidth=1.0, linestyle=(0, (4, 3))
+    )
+
+    # Short arrows creeping in along the curve from each side.
+    for x_from in (a - 0.6, a + 0.6):
+        ax.annotate(
+            "",
+            xy=(a, fa),
+            xytext=(x_from, curve(x_from)),
+            arrowprops=dict(arrowstyle="->", color=ACCENT, lw=1.8),
+        )
+
+    ax.plot([a], [fa], marker="o", color=AMBER, markersize=9, zorder=6)
+
+    ax.annotate(
+        "approach\nfrom the left",
+        xy=(a - 0.6, curve(a - 0.6)),
+        xytext=(0.55, 3.9),
+        color=ACCENT,
+        fontsize=8,
+        ha="center",
+    )
+    ax.annotate(
+        "approach\nfrom the right",
+        xy=(a + 0.6, curve(a + 0.6)),
+        xytext=(3.05, 1.15),
+        color=ACCENT,
+        fontsize=8,
+        ha="center",
+    )
+    ax.annotate(
+        "both sides land on f(a)",
+        xy=(a, fa),
+        xytext=(a - 0.1, fa + 1.05),
+        color=AMBER,
+        fontsize=8,
+        ha="center",
+    )
+
+    ax.set_xticks([a])
+    ax.set_xticklabels(["a"])
+    ax.set_yticks([fa])
+    ax.set_yticklabels(["f(a)"])
+    ax.set_xlim(-0.3, 3.5)
+    ax.set_ylim(0, 5.4)
+    ax.spines["left"].set_visible(True)
+    return save_plot(fig, "continuity-condition.svg")
+
+
+def fig_continuity_breaks() -> Path:
+    """Three panels side by side: a removable hole, a jump, and a blow-up."""
+    import numpy as np
+
+    style_plot()
+    fig, axes = plt.subplots(1, 3, figsize=(7.6, 2.9))
+
+    # Panel A: removable hole — one point missing from an otherwise smooth line.
+    ax = axes[0]
+    xs = np.linspace(-2.2, 2.2, 400)
+    ax.plot(xs, 0.5 * xs + 1.6, color=INK, linewidth=2.0)
+    a = 0.6
+    ax.plot(
+        [a],
+        [0.5 * a + 1.6],
+        marker="o",
+        markersize=8,
+        markerfacecolor="white",
+        markeredgecolor=INK,
+        markeredgewidth=1.8,
+        zorder=6,
+    )
+    ax.set_title("Removable hole", color=INK_SOFT)
+    ax.set_xlim(-2.4, 2.4)
+    ax.set_ylim(0, 3.2)
+
+    # Panel B: jump — two sides heading to different heights.
+    ax = axes[1]
+    xl = np.linspace(-2.2, 0.0, 200)
+    xr = np.linspace(0.0, 2.2, 200)
+    ax.plot(xl, 0.35 * xl + 1.1, color=INK, linewidth=2.0)
+    ax.plot(xr, 0.35 * xr + 2.15, color=INK, linewidth=2.0)
+    ax.plot(
+        [0],
+        [1.1],
+        marker="o",
+        markersize=8,
+        markerfacecolor=INK,
+        markeredgecolor=INK,
+        zorder=6,
+    )
+    ax.plot(
+        [0],
+        [2.15],
+        marker="o",
+        markersize=8,
+        markerfacecolor="white",
+        markeredgecolor=INK,
+        markeredgewidth=1.8,
+        zorder=6,
+    )
+    ax.set_title("Jump", color=INK_SOFT)
+    ax.set_xlim(-2.4, 2.4)
+    ax.set_ylim(0, 3.2)
+
+    # Panel C: blow-up — the curve races a vertical asymptote to infinity.
+    ax = axes[2]
+    xn = np.linspace(-2.2, -0.16, 200)
+    xp = np.linspace(0.16, 2.2, 200)
+    ax.plot(xn, 0.4 / xn + 1.6, color=INK, linewidth=2.0)
+    ax.plot(xp, 0.4 / xp + 1.6, color=INK, linewidth=2.0)
+    ax.axvline(0.0, color=BRICK, linewidth=1.3, linestyle=(0, (4, 3)))
+    ax.set_title("Blow-up", color=INK_SOFT)
+    ax.set_xlim(-2.4, 2.4)
+    ax.set_ylim(0, 3.2)
+
+    for ax in axes:
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.axhline(0, color=RULE_STRONG, linewidth=0.9)
+
+    fig.subplots_adjust(wspace=0.18)
+    return save_plot(fig, "continuity-breaks.svg")
+
+
+def fig_intermediate_value() -> Path:
+    """A continuous curve forced to cross a target height between its endpoints."""
+    import numpy as np
+
+    style_plot()
+    fig, ax = plt.subplots(figsize=(6.0, 3.6))
+    xs = np.linspace(0.5, 4.5, 400)
+    ys = 0.9 + 0.9 * (xs - 0.5) - 0.28 * np.sin(1.6 * (xs - 0.5))
+    ax.plot(xs, ys, color=INK, linewidth=2.2)
+
+    a, b = 0.5, 4.5
+    fa, fb = ys[0], ys[-1]
+    N = 2.6
+    c = xs[int(np.argmin(np.abs(ys - N)))]
+
+    ax.plot([a, b], [0, 0], color=RULE_STRONG, linewidth=0.9)
+    ax.axhline(N, color=ACCENT, linewidth=1.2, linestyle=(0, (4, 3)))
+    ax.plot([c, c], [0, N], color=RULE_STRONG, linewidth=1.0, linestyle=(0, (4, 3)))
+
+    ax.plot([a], [fa], marker="o", color=INK, markersize=7, zorder=6)
+    ax.plot([b], [fb], marker="o", color=INK, markersize=7, zorder=6)
+    ax.plot([c], [N], marker="o", color=AMBER, markersize=9, zorder=7)
+
+    ax.annotate(
+        "f(a)", xy=(a, fa), xytext=(a + 0.12, fa + 0.35), color=INK_SOFT, fontsize=9
+    )
+    ax.annotate(
+        "f(b)", xy=(b, fb), xytext=(b - 0.6, fb - 0.1), color=INK_SOFT, fontsize=9
+    )
+    ax.annotate(
+        "target height N",
+        xy=(0.6, N),
+        xytext=(0.6, N + 0.32),
+        color=ACCENT,
+        fontsize=9,
+    )
+    ax.annotate(
+        "crossing guaranteed",
+        xy=(c, N),
+        xytext=(c + 0.15, N - 1.25),
+        color=AMBER,
+        fontsize=8,
+        ha="center",
+    )
+
+    ax.set_xticks([a, c, b])
+    ax.set_xticklabels(["a", "c", "b"])
+    ax.set_yticks([])
+    ax.set_xlim(0.2, 4.9)
+    ax.set_ylim(0, 5.2)
+    ax.spines["left"].set_visible(False)
+    return save_plot(fig, "intermediate-value.svg")
+
+
+def fig_change_and_accumulation() -> Path:
+    """Contrast the two questions: steepness at a point vs. area beneath a curve."""
+    import numpy as np
+
+    style_plot()
+    fig, (axl, axr) = plt.subplots(1, 2, figsize=(6.6, 3.2))
+    xs = np.linspace(0, 5, 400)
+
+    def f(x):
+        return 0.18 * x**2 + 0.4 * x + 0.6
+
+    # Left: steepness at a single point (the derivative).
+    axl.plot(xs, f(xs), color=INK, linewidth=2.2)
+    x0 = 3.2
+    slope = 0.36 * x0 + 0.4  # f'(x0).
+    tx = np.linspace(x0 - 1.4, x0 + 1.4, 2)
+    axl.plot(tx, f(x0) + slope * (tx - x0), color=ACCENT, linewidth=2.0)
+    axl.plot([x0], [f(x0)], marker="o", color=ACCENT, markersize=6, zorder=5)
+    axl.set_title("how fast", color=INK)
+    axl.text(
+        0.5,
+        0.93,
+        "steepness at a point\n= the derivative",
+        transform=axl.transAxes,
+        ha="center",
+        va="top",
+        fontsize=8.5,
+        color=ACCENT,
+    )
+
+    # Right: area beneath the curve (the integral).
+    axr.plot(xs, f(xs), color=INK, linewidth=2.2)
+    axr.fill_between(xs, 0, f(xs), color=AMBER, alpha=0.18)
+    axr.set_title("how much", color=INK)
+    axr.text(
+        0.5,
+        0.93,
+        "area beneath the curve\n= the integral",
+        transform=axr.transAxes,
+        ha="center",
+        va="top",
+        fontsize=8.5,
+        color=AMBER,
+    )
+
+    for ax in (axl, axr):
+        ax.set_xlim(0, 5)
+        ax.set_ylim(0, f(5) * 1.05)
+        ax.set_xticks([])
+        ax.set_yticks([])
+
+    fig.tight_layout()
+    return save_plot(fig, "change-and-accumulation.svg")
+
+
+def fig_two_moves() -> Path:
+    """Show calculus's two moves: zoom-until-straight and slice-and-add."""
+    import numpy as np
+    from mpl_toolkits.axes_grid1.inset_locator import inset_axes, mark_inset
+
+    style_plot()
+    fig, (axl, axr) = plt.subplots(1, 2, figsize=(6.6, 3.2))
+
+    # Left: zoom in until the curve looks straight.
+    xs = np.linspace(0, 5, 400)
+
+    def g(x):
+        return 0.5 * np.sin(0.7 * x) + 0.16 * x + 1.6
+
+    axl.plot(xs, g(xs), color=INK, linewidth=2.2)
+    x0 = 1.0
+    axl.plot([x0], [g(x0)], marker="o", color=ACCENT, markersize=5, zorder=5)
+    axl.set_title("zoom in until curved looks straight", color=INK, fontsize=9)
+    axin = inset_axes(axl, width="40%", height="40%", loc="lower right", borderpad=1.1)
+    zw = 0.04  # A tiny window, so the magnified piece is visibly straight.
+    zx = np.linspace(x0 - zw, x0 + zw, 60)
+    axin.plot(zx, g(zx), color=ACCENT, linewidth=2.4)
+    axin.set_xlim(x0 - zw, x0 + zw)
+    axin.set_xticks([])
+    axin.set_yticks([])
+    axin.set_facecolor("white")  # A solid panel so the magnifier reads clearly.
+    for spine in axin.spines.values():
+        spine.set_visible(
+            True
+        )  # style_plot() hides top/right; a magnifier needs a full box.
+        spine.set_edgecolor(INK_SOFT)
+        spine.set_linewidth(1.2)
+    axin.text(
+        0.5,
+        0.86,
+        "zoomed in",
+        transform=axin.transAxes,
+        ha="center",
+        va="top",
+        fontsize=7,
+        color=MUTED,
+    )
+    mark_inset(axl, axin, loc1=2, loc2=1, fc="none", ec=MUTED, lw=1.0)
+    axl.set_xlim(0, 5)
+    axl.set_ylim(0, g(xs).max() * 1.12)
+    axl.set_xticks([])
+    axl.set_yticks([])
+
+    # Right: slice thin and add up.
+    xr = np.linspace(0, 5, 400)
+
+    def h(x):
+        return 0.16 * x**2 + 0.3 * x + 0.8
+
+    axr.plot(xr, h(xr), color=INK, linewidth=2.2)
+    edges = np.linspace(0, 5, 13)
+    lefts = edges[:-1]
+    widths = np.diff(edges)
+    heights = h(lefts + widths / 2)
+    axr.bar(
+        lefts,
+        heights,
+        width=widths,
+        align="edge",
+        color=AMBER,
+        alpha=0.22,
+        edgecolor=AMBER,
+        linewidth=0.8,
+    )
+    axr.set_title("slice thin and add up", color=INK, fontsize=9)
+    axr.set_xlim(0, 5)
+    axr.set_ylim(0, h(5) * 1.08)
+    axr.set_xticks([])
+    axr.set_yticks([])
+
+    fig.subplots_adjust(left=0.02, right=0.98, top=0.9, bottom=0.04, wspace=0.12)
+    return save_plot(fig, "two-moves.svg")
+
+
+def fig_inverse_pair() -> Path:
+    """Diagram: accumulation and rate as inverse operations (differentiate/integrate)."""
+    w, h = 680, 300
+    body = [
+        f'<rect width="{w}" height="{h}" fill="none"/>',
+        arrow_marker(ACCENT, "arrow-inverse"),
+    ]
+
+    # Two boxes: "how much" on the left, "how fast" on the right.
+    lx, rx, by, bw, bh = 50, 400, 100, 230, 100
+    for x, eb, l1, l2 in (
+        (lx, "HOW MUCH", "Total accumulated", "(the integral)"),
+        (rx, "HOW FAST", "Rate of change", "(the derivative)"),
+    ):
+        body.append(
+            f'<rect x="{x}" y="{by}" width="{bw}" height="{bh}" rx="8" '
+            f'fill="#ffffff" stroke="{RULE_STRONG}"/>'
+        )
+        cx = x + bw / 2
+        body.append(eyebrow(cx - 44, by + 28, eb))
+        body.append(
+            f'<text x="{cx:.1f}" y="{by + 58:.1f}" font-size="16" font-weight="600" '
+            f'text-anchor="middle" fill="{INK}">{l1}</text>'
+        )
+        body.append(
+            f'<text x="{cx:.1f}" y="{by + 80:.1f}" font-size="13" '
+            f'text-anchor="middle" fill="{MUTED}">{l2}</text>'
+        )
+
+    # Top arc: differentiate, left box to right box.
+    body.append(
+        f'<path d="M {lx + bw + 6} {by + 26} C 320 78, 360 78, {rx - 6} {by + 26}" '
+        f'fill="none" stroke="{ACCENT}" stroke-width="2" marker-end="url(#arrow-inverse)"/>'
+    )
+    body.append(
+        f'<text x="340" y="70" font-size="13" font-weight="600" text-anchor="middle" '
+        f'fill="{ACCENT}">differentiate</text>'
+    )
+    # Bottom arc: integrate, right box to left box.
+    body.append(
+        f'<path d="M {rx - 6} {by + bh - 26} C 360 {by + bh + 34}, 320 {by + bh + 34}, '
+        f'{lx + bw + 6} {by + bh - 26}" fill="none" stroke="{ACCENT}" stroke-width="2" '
+        f'marker-end="url(#arrow-inverse)"/>'
+    )
+    body.append(
+        f'<text x="340" y="{by + bh + 30:.0f}" font-size="13" font-weight="600" '
+        f'text-anchor="middle" fill="{ACCENT}">integrate</text>'
+    )
+    body.append(
+        f'<text x="340" y="{by + bh + 78:.0f}" font-size="13" text-anchor="middle" '
+        f'fill="{INK_SOFT}">each undoes the other</text>'
+    )
+
+    label = "Diagram: total accumulated and rate of change linked by two arrows, differentiate and integrate, each undoing the other."
+    return write_svg("inverse-pair.svg", svg_doc(w, h, label, body))
+
+
 # ---------------------------------------------------------------------------
 # The cover and the icons.
 #
@@ -388,7 +1110,24 @@ def fig_touch_icon() -> Path:
 
 
 FIGURES = (
+    # Ch 1 · What Calculus Is Really About
+    fig_change_and_accumulation,
+    fig_two_moves,
+    fig_inverse_pair,
+    # Ch 2 · Functions, Graphs, and Just Enough Algebra
+    fig_function_machine,
+    fig_graph_pairs,
+    fig_rise_over_run,
+    # Ch 3 · The Limit
+    fig_limit_hole,
+    fig_limit_failures,
+    # Ch 4 · Continuity and Its Breaks
+    fig_continuity_condition,
+    fig_continuity_breaks,
+    fig_intermediate_value,
+    # Ch 5 · The Derivative
     fig_derivative_pair,
+    # Cover and icons
     fig_cover,
     fig_icon,
     fig_touch_icon,
