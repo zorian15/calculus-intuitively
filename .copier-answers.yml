@@ -1,0 +1,30 @@
+# This file records the copier template and the answers used to generate this
+# book. It lets `copier update` pull later engine fixes as a three-way merge.
+# Changes here are overwritten by Copier; edit your answers via `copier update`.
+_commit: v1.0.0
+_src_path: gh:zorian15/textbook-template
+apple_web_app_title: Calculus
+audience: 'Someone taking Calculus 1–3 who does not think of themselves as a math
+    person. Assume almost nothing: rusty algebra, no comfort with proofs, and a fair
+    amount of math anxiety. Every idea earns a picture and a plain-words intuition
+    before any symbols show up, and no step is treated as too obvious to explain.'
+author: Zorian
+book_brand_html: Calculus,<br>Intuitively
+book_description: the ideas of single- and multivariable calculus, built from intuition
+    and pictures
+book_subtitle: The ideas behind Calc 1–3, built from pictures and plain words — for
+    anyone who never liked math.
+book_title: Calculus, Intuitively
+callout_title: Wait, why?
+canonical_base: ''
+draft: true
+github_user: zorian15
+meta_description: A textbook on the ideas of single- and multivariable calculus, built
+    from intuition and pictures.
+quiz_intro_framing: A few questions to check the ideas from this
+repo_url: https://github.com/zorian15/calculus-intuitively
+site_name: ''
+site_url: ''
+slug: calculus-intuitively
+use_glossary: true
+
