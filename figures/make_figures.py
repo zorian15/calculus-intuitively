@@ -915,95 +915,110 @@ def fig_inverse_pair() -> Path:
 # ---------------------------------------------------------------------------
 # The cover and the icons.
 #
-# One motif carries the book's identity: an abstract chain of connected nodes,
-# with dashed links bridging nodes that are far apart in the chain but close in
-# space. It is deliberately topic-neutral — replace it with a motif that fits
-# your subject once the book has a point of view.
+# The book's identity is a curve with a straight tangent line grazing it at one
+# point, over a lightly shaded area — the derivative (the tangent) and the
+# integral (the area) in a single mark, which is the whole book in a picture.
 # ---------------------------------------------------------------------------
 
 
-def motif_svg(
-    points: list[tuple[float, float]],
-    links: list[tuple[int, int]],
-    node_r: float,
-    stroke_w: float,
-) -> str:
-    """Emit the identity motif: a backbone path, dashed links, and graded nodes.
+def _curve_geometry(
+    x_left: float,
+    x_right: float,
+    y_bottom: float,
+    y_top: float,
+    t0: float = 0.66,
+    n: int = 80,
+) -> tuple[
+    list[tuple[float, float]], list[tuple[float, float]], tuple[float, float], float
+]:
+    """Return the motif geometry in a box: the curve points, the tangent segment
+    endpoints, the tangency point, and the baseline y.
 
-    `points` are node centers in draw order; `links` are index pairs joined by a
-    dashed line drawn behind the backbone. The final node is amber.
+    The curve is the parabola value = t**2 for t in [0, 1] mapped into the box
+    (y grows downward, as in SVG). The tangent is taken at t0, where the parabola
+    has slope 2*t0. All coordinates are in the target coordinate space, so the
+    same geometry drives the SVG cover/icon and the matplotlib touch icon.
     """
+    span_x = x_right - x_left
+    span_y = y_bottom - y_top
+
+    def cx(t: float) -> float:
+        return x_left + t * span_x
+
+    def cy(value: float) -> float:
+        return y_bottom - value * span_y
+
+    curve = [(cx(i / n), cy((i / n) ** 2)) for i in range(n + 1)]
+    value0 = t0 * t0
+    slope = 2 * t0
+    dt = 0.26
+    t_a, t_b = t0 - dt, t0 + dt
+    tangent = [
+        (cx(t_a), cy(value0 + slope * (t_a - t0))),
+        (cx(t_b), cy(value0 + slope * (t_b - t0))),
+    ]
+    return curve, tangent, (cx(t0), cy(value0)), cy(0.0)
+
+
+def curve_tangent_svg(
+    x_left: float,
+    x_right: float,
+    y_bottom: float,
+    y_top: float,
+    *,
+    stroke_w: float,
+    node_r: float,
+    axes: bool = False,
+) -> str:
+    """Emit the identity motif — shaded area, curve, tangent line, and dot."""
+    curve, tangent, dot, baseline = _curve_geometry(x_left, x_right, y_bottom, y_top)
+    curve_d = " L ".join(f"{x:.1f} {y:.1f}" for x, y in curve)
     parts = []
-    for i, j in links:
-        xi, yi = points[i]
-        xj, yj = points[j]
+    if axes:
         parts.append(
-            f'<line x1="{xi:.1f}" y1="{yi:.1f}" x2="{xj:.1f}" y2="{yj:.1f}" '
-            f'stroke="{MUTED}" stroke-width="{stroke_w * 0.5:.2f}" '
-            f'stroke-dasharray="4 3" opacity="0.5"/>'
+            f'<line x1="{x_left:.1f}" y1="{baseline:.1f}" x2="{x_right + 14:.1f}" '
+            f'y2="{baseline:.1f}" stroke="{RULE_STRONG}" stroke-width="1.5"/>'
         )
-    path_d = "M " + " L ".join(f"{x:.1f} {y:.1f}" for x, y in points)
+        parts.append(
+            f'<line x1="{x_left:.1f}" y1="{baseline:.1f}" x2="{x_left:.1f}" '
+            f'y2="{y_top - 14:.1f}" stroke="{RULE_STRONG}" stroke-width="1.5"/>'
+        )
+    # Shaded area under the curve.
     parts.append(
-        f'<path d="{path_d}" fill="none" stroke="{ACCENT}" '
-        f'stroke-width="{stroke_w:.2f}" stroke-linecap="round" '
-        f'stroke-linejoin="round" opacity="0.85"/>'
+        f'<path d="M {x_left:.1f} {baseline:.1f} L {curve_d} '
+        f'L {x_right:.1f} {baseline:.1f} Z" fill="{ACCENT_SOFT}" stroke="none"/>'
     )
-    n = len(points)
-    for idx, (x, y) in enumerate(points):
-        last = idx == n - 1
-        fill = AMBER if last else ACCENT
-        opacity = 1.0 if last else 0.42 + 0.58 * (idx + 1) / n
-        parts.append(
-            f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{node_r:.1f}" fill="{fill}" '
-            f'opacity="{opacity:.2f}"/>'
-        )
+    # The curve itself.
+    parts.append(
+        f'<path d="M {curve_d}" fill="none" stroke="{ACCENT}" '
+        f'stroke-width="{stroke_w:.2f}" stroke-linecap="round" stroke-linejoin="round"/>'
+    )
+    # The tangent line, then the tangency point on top.
+    (tax, tay), (tbx, tby) = tangent
+    parts.append(
+        f'<line x1="{tax:.1f}" y1="{tay:.1f}" x2="{tbx:.1f}" y2="{tby:.1f}" '
+        f'stroke="{AMBER}" stroke-width="{stroke_w:.2f}" stroke-linecap="round"/>'
+    )
+    parts.append(
+        f'<circle cx="{dot[0]:.1f}" cy="{dot[1]:.1f}" r="{node_r:.1f}" fill="{AMBER}"/>'
+    )
     return "\n".join(parts)
 
 
-# A folded chain: a top row left-to-right, a turn, a bottom row back, with a few
-# cross-row links. Shared by the cover and (scaled) the icons.
-COVER_POINTS = [
-    (110, 600),
-    (178, 600),
-    (246, 600),
-    (314, 600),
-    (382, 600),
-    (450, 600),
-    (500, 636),
-    (450, 672),
-    (382, 672),
-    (314, 672),
-    (246, 672),
-    (178, 672),
-]
-COVER_LINKS = [(1, 11), (2, 10), (3, 9), (4, 8)]
-
-ICON_POINTS = [
-    (42, 72),
-    (76, 72),
-    (110, 72),
-    (144, 72),
-    (164, 90),
-    (144, 108),
-    (110, 108),
-    (76, 108),
-]
-ICON_LINKS = [(1, 7), (2, 6)]
-
-
 def fig_cover() -> Path:
-    """The book cover: title over the identity motif, framed like a monograph."""
+    """The book cover: title over the curve-and-tangent motif, framed like a monograph."""
     width, height = 640, 960
     # Wrap the title (large serif) and subtitle (small sans) to the cover width
     # so any book's title fits without hand-tuning.
     title = "Calculus, Intuitively"
     subtitle = "The ideas behind Calc 1–3, built from pictures and plain words — for anyone who never liked math."
     title_lines = textwrap.wrap(title, width=14) or ["Untitled"]
-    subtitle_lines = textwrap.wrap(subtitle, width=42)[:2]
+    subtitle_lines = textwrap.wrap(subtitle, width=42)[:3]
 
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
-        f'role="img" aria-label="Book cover: Calculus, Intuitively.">',
+        f'role="img" aria-label="Book cover: Calculus, Intuitively. A rising curve '
+        f'with a straight tangent line grazing it at one point, over a shaded area.">',
         f'<rect width="{width}" height="{height}" fill="{PAPER}"/>',
         f'<rect x="26" y="26" width="{width - 52}" height="{height - 52}" '
         f'fill="none" stroke="{RULE_STRONG}" stroke-width="1.5"/>',
@@ -1016,7 +1031,9 @@ def fig_cover() -> Path:
             f'font-weight="700" fill="{INK}">{line}</text>'
         )
 
-    parts.append(motif_svg(COVER_POINTS, COVER_LINKS, node_r=14, stroke_w=3))
+    parts.append(
+        curve_tangent_svg(96, 544, 720, 468, stroke_w=3.5, node_r=13, axes=True)
+    )
 
     parts.append(
         f'<path d="M 72 830 L 148 830" stroke="{RULE_STRONG}" stroke-width="1.5"/>'
@@ -1031,12 +1048,12 @@ def fig_cover() -> Path:
 
 
 def fig_icon() -> Path:
-    """The favicon: the identity motif alone on a rounded paper tile."""
+    """The favicon: the curve-and-tangent motif alone on a rounded paper tile."""
     parts = [
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" '
-        'aria-label="Site icon: a short chain of connected nodes.">',
+        'aria-label="Site icon: a curve with a tangent line grazing it at a point.">',
         f'<rect width="180" height="180" rx="36" fill="{PAPER}"/>',
-        motif_svg(ICON_POINTS, ICON_LINKS, node_r=8, stroke_w=2.4),
+        curve_tangent_svg(34, 150, 140, 40, stroke_w=6, node_r=10),
         "</svg>",
     ]
     return write_root_asset("icon.svg", "\n".join(parts))
@@ -1049,7 +1066,7 @@ def fig_touch_icon() -> Path:
     `fig_icon` at exactly 180 by 180 pixels.
     """
     from matplotlib.lines import Line2D
-    from matplotlib.patches import Circle, Rectangle
+    from matplotlib.patches import Circle, Polygon, Rectangle
 
     dpi = 100
     fig = plt.figure(figsize=(1.8, 1.8), dpi=dpi)
@@ -1061,47 +1078,34 @@ def fig_touch_icon() -> Path:
     ax.add_patch(Rectangle((0, 0), 180, 180, facecolor=PAPER, edgecolor="none"))
 
     px = 72 / dpi  # One SVG stroke pixel is this many matplotlib points.
+    curve, tangent, dot, baseline = _curve_geometry(34, 150, 140, 40)
 
-    for i, j in ICON_LINKS:
-        xi, yi = ICON_POINTS[i]
-        xj, yj = ICON_POINTS[j]
-        ax.add_line(
-            Line2D(
-                [xi, xj],
-                [yi, yj],
-                color=MUTED,
-                linewidth=1.2 * px,
-                linestyle=(0, (4, 3)),
-                alpha=0.5,
-            )
-        )
+    # Shaded area under the curve.
+    area = [(34, baseline)] + curve + [(150, baseline)]
+    ax.add_patch(Polygon(area, closed=True, facecolor=ACCENT_SOFT, edgecolor="none"))
 
-    xs = [p[0] for p in ICON_POINTS]
-    ys = [p[1] for p in ICON_POINTS]
+    xs = [p[0] for p in curve]
+    ys = [p[1] for p in curve]
     ax.add_line(
         Line2D(
             xs,
             ys,
             color=ACCENT,
-            linewidth=2.4 * px,
+            linewidth=6 * px,
             solid_capstyle="round",
             solid_joinstyle="round",
-            alpha=0.85,
         )
     )
-
-    n = len(ICON_POINTS)
-    for idx, (x, y) in enumerate(ICON_POINTS):
-        last = idx == n - 1
-        ax.add_patch(
-            Circle(
-                (x, y),
-                radius=8,
-                facecolor=AMBER if last else ACCENT,
-                edgecolor="none",
-                alpha=1.0 if last else 0.42 + 0.58 * (idx + 1) / n,
-            )
+    ax.add_line(
+        Line2D(
+            [tangent[0][0], tangent[1][0]],
+            [tangent[0][1], tangent[1][1]],
+            color=AMBER,
+            linewidth=6 * px,
+            solid_capstyle="round",
         )
+    )
+    ax.add_patch(Circle(dot, radius=10, facecolor=AMBER, edgecolor="none"))
 
     path = ASSETS_DIR / "apple-touch-icon.png"
     fig.savefig(path, dpi=dpi, facecolor=PAPER)

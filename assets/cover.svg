@@ -1,27 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 960" role="img" aria-label="Book cover: Calculus, Intuitively.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 960" role="img" aria-label="Book cover: Calculus, Intuitively. A rising curve with a straight tangent line grazing it at one point, over a shaded area.">
 <rect width="640" height="960" fill="#f4f3ee"/>
 <rect x="26" y="26" width="588" height="908" fill="none" stroke="#cfcdc4" stroke-width="1.5"/>
 <text x="72" y="152" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="650" letter-spacing="5" fill="#274b6d">A TEXTBOOK</text>
 <text x="68" y="232" font-family="'Charter', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif" font-size="58" font-weight="700" fill="#17181b">Calculus,</text>
 <text x="68" y="304" font-family="'Charter', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif" font-size="58" font-weight="700" fill="#17181b">Intuitively</text>
-<line x1="178.0" y1="600.0" x2="178.0" y2="672.0" stroke="#6a6d73" stroke-width="1.50" stroke-dasharray="4 3" opacity="0.5"/>
-<line x1="246.0" y1="600.0" x2="246.0" y2="672.0" stroke="#6a6d73" stroke-width="1.50" stroke-dasharray="4 3" opacity="0.5"/>
-<line x1="314.0" y1="600.0" x2="314.0" y2="672.0" stroke="#6a6d73" stroke-width="1.50" stroke-dasharray="4 3" opacity="0.5"/>
-<line x1="382.0" y1="600.0" x2="382.0" y2="672.0" stroke="#6a6d73" stroke-width="1.50" stroke-dasharray="4 3" opacity="0.5"/>
-<path d="M 110.0 600.0 L 178.0 600.0 L 246.0 600.0 L 314.0 600.0 L 382.0 600.0 L 450.0 600.0 L 500.0 636.0 L 450.0 672.0 L 382.0 672.0 L 314.0 672.0 L 246.0 672.0 L 178.0 672.0" fill="none" stroke="#274b6d" stroke-width="3.00" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
-<circle cx="110.0" cy="600.0" r="14.0" fill="#274b6d" opacity="0.47"/>
-<circle cx="178.0" cy="600.0" r="14.0" fill="#274b6d" opacity="0.52"/>
-<circle cx="246.0" cy="600.0" r="14.0" fill="#274b6d" opacity="0.56"/>
-<circle cx="314.0" cy="600.0" r="14.0" fill="#274b6d" opacity="0.61"/>
-<circle cx="382.0" cy="600.0" r="14.0" fill="#274b6d" opacity="0.66"/>
-<circle cx="450.0" cy="600.0" r="14.0" fill="#274b6d" opacity="0.71"/>
-<circle cx="500.0" cy="636.0" r="14.0" fill="#274b6d" opacity="0.76"/>
-<circle cx="450.0" cy="672.0" r="14.0" fill="#274b6d" opacity="0.81"/>
-<circle cx="382.0" cy="672.0" r="14.0" fill="#274b6d" opacity="0.85"/>
-<circle cx="314.0" cy="672.0" r="14.0" fill="#274b6d" opacity="0.90"/>
-<circle cx="246.0" cy="672.0" r="14.0" fill="#274b6d" opacity="0.95"/>
-<circle cx="178.0" cy="672.0" r="14.0" fill="#9c6b12" opacity="1.00"/>
+<line x1="96.0" y1="720.0" x2="558.0" y2="720.0" stroke="#cfcdc4" stroke-width="1.5"/>
+<line x1="96.0" y1="720.0" x2="96.0" y2="454.0" stroke="#cfcdc4" stroke-width="1.5"/>
+<path d="M 96.0 720.0 L 96.0 720.0 L 101.6 720.0 L 107.2 719.8 L 112.8 719.6 L 118.4 719.4 L 124.0 719.0 L 129.6 718.6 L 135.2 718.1 L 140.8 717.5 L 146.4 716.8 L 152.0 716.1 L 157.6 715.2 L 163.2 714.3 L 168.8 713.3 L 174.4 712.3 L 180.0 711.1 L 185.6 709.9 L 191.2 708.6 L 196.8 707.2 L 202.4 705.8 L 208.0 704.2 L 213.6 702.6 L 219.2 700.9 L 224.8 699.2 L 230.4 697.3 L 236.0 695.4 L 241.6 693.4 L 247.2 691.3 L 252.8 689.1 L 258.4 686.9 L 264.0 684.6 L 269.6 682.2 L 275.2 679.7 L 280.8 677.1 L 286.4 674.5 L 292.0 671.8 L 297.6 669.0 L 303.2 666.1 L 308.8 663.1 L 314.4 660.1 L 320.0 657.0 L 325.6 653.8 L 331.2 650.5 L 336.8 647.2 L 342.4 643.8 L 348.0 640.3 L 353.6 636.7 L 359.2 633.0 L 364.8 629.3 L 370.4 625.5 L 376.0 621.6 L 381.6 617.6 L 387.2 613.5 L 392.8 609.4 L 398.4 605.2 L 404.0 600.9 L 409.6 596.5 L 415.2 592.1 L 420.8 587.5 L 426.4 582.9 L 432.0 578.2 L 437.6 573.5 L 443.2 568.6 L 448.8 563.7 L 454.4 558.7 L 460.0 553.6 L 465.6 548.5 L 471.2 543.2 L 476.8 537.9 L 482.4 532.5 L 488.0 527.1 L 493.6 521.5 L 499.2 515.9 L 504.8 510.2 L 510.4 504.4 L 516.0 498.5 L 521.6 492.6 L 527.2 486.5 L 532.8 480.4 L 538.4 474.3 L 544.0 468.0 L 544.0 720.0 Z" fill="#eaf0f6" stroke="none"/>
+<path d="M 96.0 720.0 L 101.6 720.0 L 107.2 719.8 L 112.8 719.6 L 118.4 719.4 L 124.0 719.0 L 129.6 718.6 L 135.2 718.1 L 140.8 717.5 L 146.4 716.8 L 152.0 716.1 L 157.6 715.2 L 163.2 714.3 L 168.8 713.3 L 174.4 712.3 L 180.0 711.1 L 185.6 709.9 L 191.2 708.6 L 196.8 707.2 L 202.4 705.8 L 208.0 704.2 L 213.6 702.6 L 219.2 700.9 L 224.8 699.2 L 230.4 697.3 L 236.0 695.4 L 241.6 693.4 L 247.2 691.3 L 252.8 689.1 L 258.4 686.9 L 264.0 684.6 L 269.6 682.2 L 275.2 679.7 L 280.8 677.1 L 286.4 674.5 L 292.0 671.8 L 297.6 669.0 L 303.2 666.1 L 308.8 663.1 L 314.4 660.1 L 320.0 657.0 L 325.6 653.8 L 331.2 650.5 L 336.8 647.2 L 342.4 643.8 L 348.0 640.3 L 353.6 636.7 L 359.2 633.0 L 364.8 629.3 L 370.4 625.5 L 376.0 621.6 L 381.6 617.6 L 387.2 613.5 L 392.8 609.4 L 398.4 605.2 L 404.0 600.9 L 409.6 596.5 L 415.2 592.1 L 420.8 587.5 L 426.4 582.9 L 432.0 578.2 L 437.6 573.5 L 443.2 568.6 L 448.8 563.7 L 454.4 558.7 L 460.0 553.6 L 465.6 548.5 L 471.2 543.2 L 476.8 537.9 L 482.4 532.5 L 488.0 527.1 L 493.6 521.5 L 499.2 515.9 L 504.8 510.2 L 510.4 504.4 L 516.0 498.5 L 521.6 492.6 L 527.2 486.5 L 532.8 480.4 L 538.4 474.3 L 544.0 468.0" fill="none" stroke="#274b6d" stroke-width="3.50" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="275.2" y1="696.7" x2="508.2" y2="523.7" stroke="#9c6b12" stroke-width="3.50" stroke-linecap="round"/>
+<circle cx="391.7" cy="610.2" r="13.0" fill="#9c6b12"/>
 <path d="M 72 830 L 148 830" stroke="#cfcdc4" stroke-width="1.5"/>
 <text x="72" y="862" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15.5" fill="#6a6d73">The ideas behind Calc 1–3, built from</text>
 <text x="72" y="885" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15.5" fill="#6a6d73">pictures and plain words — for anyone who</text>
+<text x="72" y="908" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15.5" fill="#6a6d73">never liked math.</text>
 </svg>
